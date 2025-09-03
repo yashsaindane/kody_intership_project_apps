@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shopping_web_app/ui/product/mobile/helper/custom_mobile_grid_view.dart';
+import 'package:shopping_web_app/ui/product/mobile/helper/custom_mobile_list_view.dart';
 import 'package:shopping_web_app/ui/utils/theme/app_colors.dart';
 import 'package:shopping_web_app/ui/utils/theme/text_class.dart';
 
-import '../../Orders/order_mobile_screen.dart';
-import '../../Profile/profile_mobile_screen.dart';
+import '../../Orders/mobile/order_mobile_screen.dart';
+import '../../Profile/mobile/profile_mobile_screen.dart';
 
 class ProductMobileScreen extends ConsumerStatefulWidget {
   const ProductMobileScreen({super.key});
@@ -55,7 +55,7 @@ class _ProductMobileScreenState extends ConsumerState<ProductMobileScreen> {
             label: TextClass.productsLabel,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.local_shipping),
+            icon: Icon(Icons.receipt_long),
             label: TextClass.ordersLabel,
           ),
           BottomNavigationBarItem(

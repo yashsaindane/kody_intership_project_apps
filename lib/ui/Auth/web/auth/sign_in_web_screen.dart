@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,13 +9,33 @@ import '../../../../framework/controller/auth_controller/auth/auth_provider.dart
 import '../../../../framework/controller/auth_controller/auth/login_controller.dart';
 import '../../../utils/theme/app_colors.dart';
 import '../../../utils/theme/text_class.dart';
+import 'auth_web_screen.dart';
 
-class SignInWebScreen extends ConsumerWidget {
+class SignInWebScreen extends ConsumerStatefulWidget {
   const SignInWebScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SignInWebScreen> createState() => _SignInWebScreenState();
+}
+
+class _SignInWebScreenState extends ConsumerState<SignInWebScreen> {
+  File? _selectedImage;
+
+  Future<void> _pickImage(ImageSource gallery) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
+
     // final width = MediaQuery.of(context).size.width;
     // final formWidth = width < 400 ? width * 0.9 : 400.0;
     String? validateEmail(String? value) {
@@ -29,17 +48,6 @@ class SignInWebScreen extends ConsumerWidget {
         return 'Enter valid email address';
       }
       return null;
-    }
-
-    File? _selectedImage;
-    Future<void> _pickImage(ImageSource source) async {
-      final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(source: source);
-      if (pickedFile != null) {
-        setState(() {
-          _selectedImage = File(pickedFile.path);
-        });
-      }
     }
 
     final authNotifier = ref.read(authProvider.notifier);
@@ -66,19 +74,26 @@ class SignInWebScreen extends ConsumerWidget {
                   children: [
                     CircleAvatar(
                       radius: 90,
-                      backgroundImage: CachedNetworkImageProvider(
-                        'https://www.pngfind.com/pngs/m/610-6104451_image-placeholder-png-user-Profile-placeholder-image-png.png',
-                      ),
+                      backgroundImage: _selectedImage != null
+                          ? FileImage(_selectedImage!)
+                          : null,
+                      backgroundColor: Colors.grey.shade200,
+                      child: _selectedImage == null
+                          ? Icon(Icons.person, size: 60, color: Colors.grey)
+                          : null,
                     ),
                     Positioned(
-                      left: 150,
-                      top: 155,
+                      bottom: 0,
+                      right: 0,
                       child: InkWell(
-                        onTap: () {
-                          _pickImage(ImageSource.gallery);
-                          Navigator.of(context).pop();
+                        onTap: () async {
+                          await _pickImage(ImageSource.gallery);
                         },
-                        child: Icon(Icons.add_a_photo),
+                        child: CircleAvatar(
+                          radius: 20,
+                          backgroundColor: Colors.white,
+                          child: Icon(Icons.add_a_photo, color: Colors.black),
+                        ),
                       ),
                     ),
                   ],
@@ -131,7 +146,10 @@ class SignInWebScreen extends ConsumerWidget {
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: TextClass.passwordLabel,
-                    suffixIcon: Icon(Icons.remove_red_eye),
+                    suffixIcon: InkWell(
+                      onTap: () {},
+                      child: Icon(Icons.remove_red_eye),
+                    ),
                     hintText: TextClass.enterYourPassword,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -151,11 +169,27 @@ class SignInWebScreen extends ConsumerWidget {
                       ),
                     ),
                     onPressed: () async {
+                      final name = LoginController.nameController.text.trim();
                       final email = LoginController.emailController.text.trim();
                       final password = LoginController.passwordController.text
                           .trim();
                       if (email.isNotEmpty && password.isNotEmpty) {
-                        await authNotifier.login(email, password);
+                        await authNotifier.registerUser(
+                          email: email,
+                          password: password,
+                          profileImage: _selectedImage,
+                          name: name,
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Registered as $email")),
+                        );
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AuthWebScreen(),
+                          ),
+                        );
+
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text("Logged in as $email"),
@@ -195,6 +229,4 @@ class SignInWebScreen extends ConsumerWidget {
       ),
     );
   }
-
-  setState(Null Function() param0) {}
 }

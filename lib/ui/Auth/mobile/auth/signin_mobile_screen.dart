@@ -19,6 +19,19 @@ class SigninMobileScreen extends ConsumerStatefulWidget {
 }
 
 class _SigninMobileScreenState extends ConsumerState<SigninMobileScreen> {
+  File? _selectedImage;
+
+  Future<void> _pickImage(ImageSource gallery) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
@@ -35,18 +48,6 @@ class _SigninMobileScreenState extends ConsumerState<SigninMobileScreen> {
         return 'Enter valid email address';
       }
       return null;
-    }
-
-    File? _selectedImage;
-    Future<void> _pickImage(ImageSource source) async {
-      final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(source: source);
-
-      if (pickedFile != null) {
-        setState(() {
-          _selectedImage = File(pickedFile.path);
-        });
-      }
     }
 
     final authNotifier = ref.read(authProvider.notifier);
@@ -88,10 +89,10 @@ class _SigninMobileScreenState extends ConsumerState<SigninMobileScreen> {
                         onTap: () async {
                           await _pickImage(ImageSource.gallery);
                         },
-                        child: const CircleAvatar(
+                        child: CircleAvatar(
                           radius: 20,
                           backgroundColor: Colors.white,
-                          child: Icon(Icons.add_a_photo, size: 20),
+                          child: Icon(Icons.add_a_photo, color: Colors.black),
                         ),
                       ),
                     ),
@@ -136,7 +137,7 @@ class _SigninMobileScreenState extends ConsumerState<SigninMobileScreen> {
                 TextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter password';
+                      return 'Please enter passwpassword';
                     }
                     return null;
                   },
@@ -168,6 +169,7 @@ class _SigninMobileScreenState extends ConsumerState<SigninMobileScreen> {
                       ),
                     ),
                     onPressed: () async {
+                      final name = LoginController.nameController.text.trim();
                       final email = LoginController.emailController.text.trim();
                       final password = LoginController.passwordController.text
                           .trim();
@@ -176,6 +178,7 @@ class _SigninMobileScreenState extends ConsumerState<SigninMobileScreen> {
                           email: email,
                           password: password,
                           profileImage: _selectedImage,
+                          name: name,
                         );
 
                         ScaffoldMessenger.of(context).showSnackBar(

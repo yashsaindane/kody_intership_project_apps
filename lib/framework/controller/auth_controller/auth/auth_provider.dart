@@ -28,6 +28,7 @@ class AuthNotifier extends StateNotifier<AuthModel?> {
   }
 
   Future<void> registerUser({
+    required String name,
     required String email,
     required String password,
     File? profileImage,
@@ -35,6 +36,7 @@ class AuthNotifier extends StateNotifier<AuthModel?> {
     final prefs = await SharedPreferences.getInstance();
 
     final user = AuthModel(
+      name: name,
       email: email,
       password: password,
       isLogin: false,
@@ -44,6 +46,8 @@ class AuthNotifier extends StateNotifier<AuthModel?> {
     final userJson = jsonEncode(user.toJson());
     await prefs.setString('user_data', userJson);
     await prefs.setBool('isRegistered', true);
+
+    state = user;
   }
 
   Future<bool> login(String email, String password) async {
@@ -68,11 +72,20 @@ class AuthNotifier extends StateNotifier<AuthModel?> {
 
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    state = null;
-  }
 
-  bool get isLoggedIn => state?.isLogin == true;
+    final userJson = prefs.getString('user_data');
+    if (userJson != null) {
+      final Map<String, dynamic> userMap = jsonDecode(userJson);
+      userMap['isLogin'] = false;
+
+      await prefs.setString('user_data', jsonEncode(userMap));
+      await prefs.setBool('isLogin', false);
+      final user = AuthModel.fromJson(userMap);
+      state = user;
+    } else {
+      state = null;
+    }
+  }
 }
 
 final passwordVisibilityProvider = StateProvider<bool>((ref) => true);
