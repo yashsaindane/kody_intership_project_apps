@@ -120,6 +120,7 @@ class CartNotifier extends StateNotifier<List<CartProduct>> {
       'cartBox',
     ); // Open cart storage box in Hive
     await box.clear(); // Clear all items from the cart
+    state = [];
   }
 }
 

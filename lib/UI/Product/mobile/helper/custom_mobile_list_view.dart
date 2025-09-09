@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shopping_web_app/UI/utils/theme/text_class.dart';
+import 'package:shopping_web_app/framework/controller/product/products_provider.dart';
+import 'package:shopping_web_app/framework/controller/product_detail/product_detail_provider.dart';
 import 'package:shopping_web_app/ui/Cart/mobile/cart_mobile_screen.dart';
 import 'package:shopping_web_app/ui/product_details/mobile/product_detail_mobile_screen.dart';
 import 'package:shopping_web_app/ui/utils/theme/app_colors.dart';
-
-import '../../../../framework/provider/product_detail/product_provider.dart';
 
 class CustomMobileListView extends ConsumerStatefulWidget {
   const CustomMobileListView({super.key});
@@ -20,7 +20,6 @@ class _CustomMobileListViewState extends ConsumerState<CustomMobileListView> {
   Widget build(BuildContext context) {
     final products = ref.watch(sortListProvider);
     final categoryFilter = ref.watch(categoryFilterProvider);
-
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,22 +109,63 @@ class _CustomMobileListViewState extends ConsumerState<CustomMobileListView> {
                       ),
                     ],
                   ),
-                  trailing: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CartMobileScreen(),
+                  trailing: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CartMobileScreen(),
+                            ),
+                          );
+                        },
+                        child: Icon(
+                          product.productTrailingIcon,
+                          color: AppColors.secondaryColor,
                         ),
-                      );
-                    },
-                    child: Icon(
-                      product.productTrailingIcon,
-                      color: AppColors.secondaryColor,
-                    ),
+                      ),
+                      SizedBox(height: 10),
+                      // Row(
+                      //   // mainAxisAlignment: MainAxisAlignment.end,
+                      //   mainAxisSize: MainAxisSize.min,
+                      //   children: [
+                      //     IconButton(
+                      //       icon: Icon(Icons.remove, size: 13),
+                      //       onPressed: () {
+                      //         // if (product.quantity > 1) {
+                      //         //   cartNotifier.updateCart(
+                      //         //     product,
+                      //         //     product.quantity - 1,
+                      //         //   );
+                      //         // } else {
+                      //         //   cartNotifier.updateCart(product, 0);
+                      //         // }
+                      //       },
+                      //     ),
+                      //     Text(
+                      //       '${product.quantity}',
+                      //       style: TextStyle(fontSize: 12),
+                      //     ),
+                      //     IconButton(
+                      //       icon: Icon(Icons.add, size: 13),
+                      //       onPressed: () {
+                      //         // cartNotifier.updateCart(
+                      //         //   product,
+                      //         //   product.quantity + 1,
+                      //         // );
+                      //       },
+                      //     ),
+                      //   ],
+                      // ),
+                    ],
                   ),
                   onTap: () {
-                    ref.read(selectedProductProvider.notifier).state = product;
+                    ref
+                        .read(selectedProductProvider.notifier)
+                        .addElement(product);
                     Navigator.push(
                       context,
                       MaterialPageRoute(

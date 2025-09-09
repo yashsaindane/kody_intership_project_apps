@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shopping_web_app/UI/Auth/web/auth/login_web_screen.dart';
 import 'package:shopping_web_app/UI/utils/theme/text_class.dart';
+import 'package:shopping_web_app/framework/controller/auth_controller/auth/auth_provider.dart';
 import 'package:shopping_web_app/ui/utils/theme/app_colors.dart';
-
-import '../../../framework/provider/auth/auth_provider.dart';
-import '../../Auth/web/auth/login_web_screen.dart';
 
 class ProfileWebScreen extends ConsumerWidget {
   const ProfileWebScreen({super.key});
@@ -41,9 +40,10 @@ class ProfileWebScreen extends ConsumerWidget {
                 width: double.maxFinite,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacement(
+                    Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(builder: (context) => LoginWebScreen()),
+                      (route) => route.isCurrent,
                     );
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

@@ -8,7 +8,7 @@ import 'package:shopping_web_app/ui/splash_screen.dart';
 import 'framework/repository/cart/model/hive_cart_model.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  // WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(CartProductAdapter());
   Hive.registerAdapter(ProductStatusAdapter());

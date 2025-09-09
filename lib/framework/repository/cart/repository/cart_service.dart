@@ -16,38 +16,51 @@ class CartService {
     await prefs.setString('userEmail', email);
   }
 
-  // Open Hive box for CartProduct
-  Future<Box<CartProduct>> openCartBox() async {
-    return await Hive.openBox<CartProduct>('cartBox');
+  // Generate box name based on user email
+  Future<String> _getCartBoxName() async {
+    final email = await getUserEmail();
+    return '${email}_cartBox'; // e.g., user@example.com_cartBox
   }
 
-  // Add CartProduct to Hive local database here productid is used as key
+  // Open Hive box for CartProduct with user-specific name
+  Future<Box<CartProduct>> openCartBox() async {
+    final boxName = await _getCartBoxName();
+    return await Hive.openBox<CartProduct>(boxName);
+  }
+
+  // Add CartProduct to Hive local database using productId as key
   Future<void> addCartProduct(CartProduct cartProduct) async {
-    final Box<CartProduct> cartBox = await openCartBox();
+    final cartBox = await openCartBox();
     await cartBox.put(cartProduct.productId, cartProduct);
   }
 
-  // Get CartProduct from Hive local database by using productId
+  // Get CartProduct by productId
   Future<CartProduct?> getCartProduct(int productId) async {
-    final Box<CartProduct> cartBox = await openCartBox();
+    final cartBox = await openCartBox();
     return cartBox.get(productId);
   }
 
-  // Get all CartProducts from Hive local database
+  // Get all CartProducts for the current user
   Future<List<CartProduct>> getAllCartProducts() async {
-    final Box<CartProduct> cartBox = await openCartBox();
+    final cartBox = await openCartBox();
     return cartBox.values.toList();
   }
 
-  // Update CartProduct in Hive local database
+  // Update a CartProduct
   Future<void> updateCartProduct(CartProduct updatedProduct) async {
-    final Box<CartProduct> cartBox = await openCartBox();
+    final cartBox = await openCartBox();
     await cartBox.put(updatedProduct.productId, updatedProduct);
   }
 
-  // Remove CartProduct from Hive local database
+  // Remove CartProduct by productId
   Future<void> removeCartProduct(int productId) async {
-    final Box<CartProduct> cartBox = await openCartBox();
+    final cartBox = await openCartBox();
     await cartBox.delete(productId);
+  }
+
+  // Optional: Clear all items from the user's cart
+  Future<void> clearCart() async {
+    final cartBox = await openCartBox();
+    await cartBox.clear();
   }
 }

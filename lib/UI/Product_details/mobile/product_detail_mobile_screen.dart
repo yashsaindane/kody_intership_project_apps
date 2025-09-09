@@ -2,12 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shopping_web_app/UI/Cart/mobile/cart_mobile_screen.dart';
+import 'package:shopping_web_app/UI/utils/theme/text_class.dart';
+import 'package:shopping_web_app/framework/controller/cart/cart_provider.dart';
+import 'package:shopping_web_app/framework/controller/product_detail/product_detail_provider.dart';
+import 'package:shopping_web_app/framework/repository/cart/model/hive_cart_model.dart';
 import 'package:shopping_web_app/ui/utils/theme/app_colors.dart';
-
-import '../../../framework/provider/cart/cart_provider.dart';
-import '../../../framework/provider/product_detail/product_provider.dart';
-import '../../../framework/repository/cart/model/hive_cart_model.dart';
-import '../../utils/theme/text_class.dart';
 
 class ProductDetailMobileScreen extends ConsumerStatefulWidget {
   const ProductDetailMobileScreen({super.key});
@@ -36,7 +35,11 @@ class _ProductDetailMobileScreenState
 
   @override
   Widget build(BuildContext context) {
-    final selectedProduct = ref.watch(selectedProductProvider);
+    final selectedProductList = ref.watch(selectedProductProvider).productList;
+    final selectedProduct = selectedProductList.isNotEmpty
+        ? selectedProductList.last
+        : null;
+
     if (selectedProduct == null) {
       return Scaffold(
         appBar: AppBar(title: Text(TextClass.productDetails)),

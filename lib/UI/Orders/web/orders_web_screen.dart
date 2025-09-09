@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shopping_web_app/UI/Auth/web/auth/register_web_screen.dart';
+import 'package:shopping_web_app/UI/Product/web/product_web_screen.dart';
+import 'package:shopping_web_app/UI/utils/theme/app_colors.dart';
 import 'package:shopping_web_app/UI/utils/theme/text_class.dart';
-
-import '../../../framework/provider/auth/auth_provider.dart';
-import '../../../framework/provider/order/order_provider.dart';
-import '../../../framework/repository/order/model/hive_order_model.dart';
-import '../../Auth/web/auth/register_web_screen.dart';
-import '../../Product/web/product_web_screen.dart';
-import '../../utils/theme/app_colors.dart';
+import 'package:shopping_web_app/framework/controller/auth_controller/auth/auth_provider.dart';
+import 'package:shopping_web_app/framework/controller/order/order_provider.dart';
+import 'package:shopping_web_app/framework/repository/order/model/hive_order_model.dart';
 
 class OrdersWebScreen extends ConsumerStatefulWidget {
   const OrdersWebScreen({super.key});

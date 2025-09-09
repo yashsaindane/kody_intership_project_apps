@@ -1,13 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../framework/provider/cart/cart_provider.dart';
-import '../../../framework/provider/product_detail/product_provider.dart';
-import '../../../framework/repository/cart/model/hive_cart_model.dart';
-import '../../Cart/web/cart_web_screen.dart';
-import '../../utils/theme/app_colors.dart';
-import '../../utils/theme/text_class.dart';
+import 'package:shopping_web_app/UI/Cart/web/cart_web_screen.dart';
+import 'package:shopping_web_app/UI/utils/theme/app_colors.dart';
+import 'package:shopping_web_app/UI/utils/theme/text_class.dart';
+import 'package:shopping_web_app/framework/controller/cart/cart_provider.dart';
+import 'package:shopping_web_app/framework/controller/product_detail/product_detail_provider.dart';
+import 'package:shopping_web_app/framework/repository/cart/model/hive_cart_model.dart';
 
 class ProductDetailWebScreen extends ConsumerStatefulWidget {
   const ProductDetailWebScreen({super.key});
@@ -37,20 +36,17 @@ class _ProductDetailWebScreenState
   @override
   Widget build(BuildContext context) {
     final selectedProduct = ref.watch(selectedProductProvider);
-
     if (selectedProduct == null) {
       return Scaffold(
         appBar: AppBar(title: Text(TextClass.productDetails)),
         body: Center(child: Text(TextClass.noProductSelected)),
       );
     }
-
-    final images = selectedProduct.imageUrl ?? [];
-
+    final images = selectedProduct.productList[0].imageUrl ?? [];
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          selectedProduct.productName ?? '',
+          selectedProduct.productList[0].productName ?? '',
           style: TextStyle(color: AppColors.textColor, fontSize: 18),
         ),
         backgroundColor: AppColors.primaryColor,
@@ -107,12 +103,12 @@ class _ProductDetailWebScreenState
                 ),
               SizedBox(height: 16),
               Text(
-                'Price: ₹${selectedProduct.productPrice ?? ''}',
+                'Price: ₹${selectedProduct.productList[0].productPrice ?? ''}',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 16),
               Text(
-                selectedProduct.productDescription ?? '',
+                selectedProduct.productList[0].productDescription ?? '',
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 30),
@@ -129,11 +125,16 @@ class _ProductDetailWebScreenState
                   onPressed: () {
                     final cartProduct = CartProduct(
                       productId:
-                          int.tryParse(selectedProduct.productId ?? '0') ?? 0,
-                      productName: selectedProduct.productName ?? '',
-                      productPrice: selectedProduct.productPrice ?? 0,
+                          int.tryParse(
+                            selectedProduct.productList[0].productId ?? '0',
+                          ) ??
+                          0,
+                      productName:
+                          selectedProduct.productList[0].productName ?? '',
+                      productPrice:
+                          selectedProduct.productList[0].productPrice ?? 0,
                       quantity: 1,
-                      imageUrl: selectedProduct.imageUrl ?? [],
+                      imageUrl: selectedProduct.productList[0].imageUrl ?? [],
                       dateTime: DateTime.now(),
                       status: ProductStatus.pending,
                       userEmail: '',

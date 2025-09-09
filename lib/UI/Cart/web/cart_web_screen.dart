@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../framework/provider/cart/cart_provider.dart';
-import '../../CheckOut/web/check_out_web_screen.dart';
-import '../../utils/theme/app_colors.dart';
-import '../../utils/theme/text_class.dart';
+import 'package:shopping_web_app/UI/CheckOut/web/check_out_web_screen.dart';
+import 'package:shopping_web_app/UI/utils/theme/app_colors.dart';
+import 'package:shopping_web_app/UI/utils/theme/text_class.dart';
+import 'package:shopping_web_app/framework/controller/cart/cart_provider.dart';
 
 class CartWebScreen extends ConsumerStatefulWidget {
   const CartWebScreen({super.key});

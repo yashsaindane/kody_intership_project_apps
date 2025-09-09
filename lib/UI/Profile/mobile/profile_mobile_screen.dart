@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shopping_web_app/UI/Auth/mobile/auth/login_mobile_screen.dart';
 import 'package:shopping_web_app/UI/utils/theme/text_class.dart';
+import 'package:shopping_web_app/framework/controller/auth_controller/auth/auth_provider.dart';
+import 'package:shopping_web_app/framework/controller/auth_controller/auth/login_controller.dart';
 import 'package:shopping_web_app/ui/utils/theme/app_colors.dart';
-
-import '../../../framework/provider/auth/auth_provider.dart';
-import '../../Auth/mobile/auth/login_mobile_screen.dart';
 
 class ProfileMobileScreen extends ConsumerWidget {
   const ProfileMobileScreen({super.key});
@@ -41,21 +41,24 @@ class ProfileMobileScreen extends ConsumerWidget {
                 width: double.maxFinite,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacement(
+                    Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
                         builder: (context) => LoginMobileScreen(),
                       ),
+                      (route) => route.isCurrent,
                     );
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        duration: Duration(seconds: 1),
+                        duration: Duration(milliseconds: 1000),
                         margin: EdgeInsets.only(bottom: 60),
                         behavior: SnackBarBehavior.floating,
                         content: Text(TextClass.logout),
                         backgroundColor: AppColors.successColor,
                       ),
                     );
+                    LoginController.loginPasswordController.clear();
+                    LoginController.loginEmailController.clear();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.secondaryColor,

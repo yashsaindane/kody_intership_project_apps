@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shopping_web_app/ui/utils/theme/text_class.dart';
 
-import '../../../framework/provider/product_detail/product_provider.dart';
+import '../../../framework/controller/product_detail/product_detail_provider.dart';
 import '../../Cart/web/cart_web_screen.dart';
 import '../../Orders/web/orders_web_screen.dart';
 import '../../Profile/web/profile_web_screen.dart';

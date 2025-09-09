@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shopping_web_app/ui/utils/theme/text_class.dart';
 
-import '../../../provider/product_detail/product_provider.dart';
+import '../../../controller/product/products_provider.dart';
 
 class ProductsList {
   final String? productId;

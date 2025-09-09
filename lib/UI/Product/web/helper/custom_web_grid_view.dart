@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shopping_web_app/UI/utils/theme/text_class.dart';
 
-import '../../../../framework/provider/product_detail/product_provider.dart';
-import '../../../Cart/web/cart_web_screen.dart';
+import '../../../../framework/controller/product/products_provider.dart';
+import '../../../../framework/controller/product_detail/product_detail_provider.dart';
 import '../../../Product_details/web/product_details_web_screen.dart';
 import '../../../utils/theme/app_colors.dart';
 
@@ -45,15 +45,15 @@ class _CustomWebGridViewState extends ConsumerState<CustomWebGridView> {
                     ),
                     SizedBox(width: 8),
                     ...ProductCategory.values.map(
-                      (cat) => Padding(
+                      (category) => Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: ChoiceChip(
                           backgroundColor: AppColors.secondaryColor,
-                          label: Text(cat.label),
-                          selected: categoryFilter == cat,
+                          label: Text(category.label),
+                          selected: categoryFilter == category,
                           onSelected: (context) {
                             ref.read(categoryFilterProvider.notifier).state =
-                                cat;
+                                category;
                           },
                         ),
                       ),
@@ -122,20 +122,22 @@ class _CustomWebGridViewState extends ConsumerState<CustomWebGridView> {
                     ],
                   ),
                 ),
-                trailing: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => CartWebScreen()),
-                    );
-                  },
-                  child: Icon(
-                    product.productTrailingIcon,
-                    color: AppColors.secondaryColor,
-                  ),
-                ),
+                // trailing: InkWell(
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(builder: (context) => CartWebScreen()),
+                //     );
+                //   },
+                //   child: Icon(
+                //     product.productTrailingIcon,
+                //     color: AppColors.secondaryColor,
+                //   ),
+                // ),
                 onTap: () {
-                  ref.read(selectedProductProvider.notifier).state = product;
+                  ref
+                      .read(selectedProductProvider.notifier)
+                      .addElement(product);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

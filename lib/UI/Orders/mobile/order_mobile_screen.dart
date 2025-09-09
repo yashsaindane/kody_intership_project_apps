@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shopping_web_app/UI/Auth/mobile/auth/register_mobile_screen.dart';
 import 'package:shopping_web_app/UI/Product/mobile/product_mobile_screen.dart';
 import 'package:shopping_web_app/UI/utils/theme/app_colors.dart';
 import 'package:shopping_web_app/UI/utils/theme/text_class.dart';
-import 'package:shopping_web_app/framework/provider/auth/auth_provider.dart';
-import 'package:shopping_web_app/framework/provider/order/order_provider.dart';
+import 'package:shopping_web_app/framework/controller/auth_controller/auth/auth_provider.dart';
+import 'package:shopping_web_app/framework/controller/order/order_provider.dart';
 import 'package:shopping_web_app/framework/repository/order/model/hive_order_model.dart';
-
-import '../../Auth/mobile/auth/register_mobile_screen.dart';
 
 class OrderMobileScreen extends ConsumerStatefulWidget {
   const OrderMobileScreen({super.key});
@@ -17,7 +16,7 @@ class OrderMobileScreen extends ConsumerStatefulWidget {
 }
 
 class _OrderMobileScreenState extends ConsumerState<OrderMobileScreen> {
-  OrderStatus? _selectedFilter;
+  OrderStatus? selectedFilter;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,6 @@ class _OrderMobileScreenState extends ConsumerState<OrderMobileScreen> {
     if (auth != null && !auth.isGuest) {
       ref.read(orderProvider.notifier).loadOrders();
     }
-
     final orders = ref.watch(orderProvider);
 
     if (auth == null || auth.isGuest) {
@@ -38,9 +36,10 @@ class _OrderMobileScreenState extends ConsumerState<OrderMobileScreen> {
           ),
           leading: InkWell(
             onTap: () {
-              Navigator.pushReplacement(
+              Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => ProductMobileScreen()),
+                (route) => route.isCurrent,
               );
             },
             child: Icon(Icons.arrow_back, color: AppColors.textColor),
@@ -78,11 +77,9 @@ class _OrderMobileScreenState extends ConsumerState<OrderMobileScreen> {
         ),
       );
     }
-
-    final filteredOrders = _selectedFilter == null
+    final filteredOrders = selectedFilter == null
         ? orders
-        : orders.where((order) => order.status == _selectedFilter).toList();
-
+        : orders.where((order) => order.status == selectedFilter).toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -91,9 +88,10 @@ class _OrderMobileScreenState extends ConsumerState<OrderMobileScreen> {
         ),
         leading: InkWell(
           onTap: () {
-            Navigator.pushReplacement(
+            Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => ProductMobileScreen()),
+              (route) => route.isCurrent,
             );
           },
           child: Icon(Icons.arrow_back, color: AppColors.textColor),
@@ -113,10 +111,10 @@ class _OrderMobileScreenState extends ConsumerState<OrderMobileScreen> {
                   const SizedBox(width: 10),
                   ChoiceChip(
                     label: Text(TextClass.all),
-                    selected: _selectedFilter == null,
+                    selected: selectedFilter == null,
                     onSelected: (bool selected) {
                       setState(() {
-                        _selectedFilter = null;
+                        selectedFilter = null;
                       });
                     },
                   ),
@@ -126,10 +124,10 @@ class _OrderMobileScreenState extends ConsumerState<OrderMobileScreen> {
                       padding: const EdgeInsets.only(left: 10),
                       child: ChoiceChip(
                         label: Text(status.name),
-                        selected: _selectedFilter == status,
+                        selected: selectedFilter == status,
                         onSelected: (bool selected) {
                           setState(() {
-                            _selectedFilter = selected ? status : null;
+                            selectedFilter = selected ? status : null;
                           });
                         },
                       ),
@@ -145,19 +143,19 @@ class _OrderMobileScreenState extends ConsumerState<OrderMobileScreen> {
                 itemBuilder: (context, index) {
                   final order = filteredOrders[index];
                   return Card(
-                    margin: const EdgeInsets.all(8),
+                    margin: EdgeInsets.all(8),
                     child: ListTile(
                       leading: order.imageUrl.isNotEmpty
                           ? SizedBox(
                               width: 70,
                               child: Wrap(
-                                spacing: 4,
-                                runSpacing: 4,
+                                spacing: 2,
+                                runSpacing: 2,
                                 children: order.imageUrl.map((url) {
                                   return Image.network(
                                     url,
-                                    width: 80,
-                                    height: 80,
+                                    width: 60,
+                                    height: 60,
                                     fit: BoxFit.contain,
                                   );
                                 }).toList(),

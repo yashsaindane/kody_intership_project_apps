@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shopping_web_app/UI/CheckOut/mobile/check_out_mobile_screen.dart';
+import 'package:shopping_web_app/UI/utils/theme/app_colors.dart';
 import 'package:shopping_web_app/UI/utils/theme/text_class.dart';
-
-import '../../../framework/provider/auth/auth_provider.dart';
-import '../../../framework/provider/cart/cart_provider.dart';
-import '../../CheckOut/mobile/check_out_mobile_screen.dart';
-import '../../utils/theme/app_colors.dart';
+import 'package:shopping_web_app/framework/controller/auth_controller/auth/auth_provider.dart';
+import 'package:shopping_web_app/framework/controller/cart/cart_provider.dart';
 
 class CartMobileScreen extends ConsumerStatefulWidget {
   const CartMobileScreen({super.key});
@@ -21,7 +20,6 @@ class _CartMobileScreenState extends ConsumerState<CartMobileScreen> {
     final cartNotifier = ref.read(cartProvider.notifier);
     final authState = ref.watch(authProvider);
     final isGuest = authState == null || !authState.isLogin;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(TextClass.carts),
@@ -107,6 +105,7 @@ class _CartMobileScreenState extends ConsumerState<CartMobileScreen> {
                 );
               },
             ),
+
             SizedBox(height: 20),
             SizedBox(
               height: 45,

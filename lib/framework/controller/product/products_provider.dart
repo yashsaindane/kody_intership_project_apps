@@ -7,18 +7,13 @@ final productListProvider = Provider<List<ProductsList>>((ref) {
   return productList;
 });
 
-//Provider provide single product in product detail screen
-final selectedProductProvider = StateProvider<ProductsList?>((ref) => null);
-
-final boxExpandProvider = StateProvider<bool>((ref) => false);
-
 //Sorting Enums
 enum ProductSortType { name, category }
 
 enum ProductCategory { shoes, headphones, laptops, speakers }
 
 //Extension on ProductCategory of labels for categories
-extension ProductCategoryExt on ProductCategory {
+extension ProductCategoryExtension on ProductCategory {
   String get label {
     switch (this) {
       case ProductCategory.shoes:
