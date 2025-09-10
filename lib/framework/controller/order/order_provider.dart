@@ -29,7 +29,7 @@ class OrderNotifier extends StateNotifier<List<Order>> {
 
     // retrieve all orders from user-specific box
     final orders = await OrderService.getOrders();
-    state = orders;
+    state = orders.reversed.toList();
   }
 
   // Add a new order to the Hive box and reload the orders

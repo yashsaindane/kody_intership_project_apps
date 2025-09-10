@@ -3,20 +3,24 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shopping_web_app/framework/controller/cart/cart_provider.dart';
+import 'package:shopping_web_app/framework/controller/product/products_provider.dart';
+import 'package:shopping_web_app/framework/repository/auth_repository/model/auth_model.dart';
 
-import '../../../repository/auth_repository/model/auth_model.dart';
 import 'login_controller.dart';
 
 final authProvider = StateNotifierProvider<AuthNotifier, AuthModel?>(
-  (ref) => AuthNotifier(),
+  (ref) => AuthNotifier(ref),
 );
 
 class AuthNotifier extends StateNotifier<AuthModel?> {
-  AuthNotifier() : super(null) {
+  final Ref ref;
+
+  AuthNotifier(this.ref) : super(null) {
     _loadAuthData();
   }
 
-  /// Load current user session if exists
+  // Load current user info if exists in it
   Future<void> _loadAuthData() async {
     final prefs = await SharedPreferences.getInstance();
     final userJson = prefs.getString('user_data');
@@ -29,7 +33,7 @@ class AuthNotifier extends StateNotifier<AuthModel?> {
     }
   }
 
-  /// Register a new user and save to list
+  // Registering a new user and save his info to list
   Future<void> registerUser({
     required String name,
     required String email,
@@ -42,7 +46,7 @@ class AuthNotifier extends StateNotifier<AuthModel?> {
     final usersJson = prefs.getString('registered_users');
     List<dynamic> usersList = usersJson != null ? jsonDecode(usersJson) : [];
 
-    // Check if user already exists
+    // Checking if the user already exists
     bool userExists = usersList.any((user) => user['email'] == email);
     if (userExists) {
       throw Exception('User already exists with this email');
@@ -61,15 +65,16 @@ class AuthNotifier extends StateNotifier<AuthModel?> {
     usersList.add(newUser.toJson());
     await prefs.setString('registered_users', jsonEncode(usersList));
 
-    // Save current user session (optional at this point)
+    // Saving current user information
     await prefs.setString('user_data', jsonEncode(newUser.toJson()));
     await prefs.setString('userEmail', email);
     await prefs.setBool('isRegistered', true);
-
+    await cartService.saveUserEmail(email);
     state = newUser;
+    ref.read(categoryFilterProvider.notifier).state = null;
   }
 
-  /// Log in with email and password
+  // Log in with email and password
   Future<bool> login(String email, String password) async {
     final prefs = await SharedPreferences.getInstance();
     final usersJson = prefs.getString('registered_users');
@@ -85,7 +90,10 @@ class AuthNotifier extends StateNotifier<AuthModel?> {
           await prefs.setBool('isLogin', true);
           await prefs.setString('userEmail', email);
 
+          await cartService.saveUserEmail(email);
+
           state = updatedUser;
+          ref.read(categoryFilterProvider.notifier).state = null;
           return true;
         }
       }
@@ -94,7 +102,7 @@ class AuthNotifier extends StateNotifier<AuthModel?> {
     return false;
   }
 
-  /// Guest login (no account)
+  // Guest login with dummy name and values
   Future<void> loginAsGuest() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -110,11 +118,11 @@ class AuthNotifier extends StateNotifier<AuthModel?> {
     await prefs.setString('user_data', jsonEncode(guestUser.toJson()));
     await prefs.setBool('isLogin', true);
     await prefs.remove('userEmail');
-
     state = guestUser;
+    ref.read(categoryFilterProvider.notifier).state = null;
   }
 
-  //Logout current user, but keep registered users
+  //Logout current user but keep registered users in it
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -124,6 +132,7 @@ class AuthNotifier extends StateNotifier<AuthModel?> {
     await prefs.remove('userEmail');
 
     state = null;
+    ref.read(categoryFilterProvider.notifier).state = null;
     LoginController.clearText();
   }
 
@@ -140,11 +149,4 @@ class AuthNotifier extends StateNotifier<AuthModel?> {
   }
 }
 
-// this provider is used to handle the visibility of the password field
 final passwordVisibilityProvider = StateProvider<bool>((ref) => true);
-
-///
-// final registerNameProvider = StateProvider<String>((ref) => '');
-// final registerEmailProvider = StateProvider<String>((ref) => '');
-// final registerPasswordProvider = StateProvider<String>((ref) => '');
-final registerProfileImageProvider = StateProvider<File?>((ref) => null);

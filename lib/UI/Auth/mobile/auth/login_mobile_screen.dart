@@ -36,7 +36,7 @@ class _LoginMobileScreenState extends ConsumerState<LoginMobileScreen> {
     return Scaffold(
       body: GestureDetector(
         onTap: () {
-          FocusScope.of(context).requestFocus(new FocusNode());
+          FocusScope.of(context).requestFocus(FocusNode());
         },
         child: SingleChildScrollView(
           padding: EdgeInsets.only(top: 180, left: 15, right: 15),

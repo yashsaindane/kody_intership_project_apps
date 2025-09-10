@@ -135,9 +135,7 @@ class _CustomWebGridViewState extends ConsumerState<CustomWebGridView> {
                 //   ),
                 // ),
                 onTap: () {
-                  ref
-                      .read(selectedProductProvider.notifier)
-                      .addElement(product);
+                  ref.read(selectedProductProvider.notifier).addPro(product);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

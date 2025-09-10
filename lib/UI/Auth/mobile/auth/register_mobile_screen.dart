@@ -68,6 +68,7 @@ class _RegisterMobileScreenState extends ConsumerState<RegisterMobileScreen> {
             child: Icon(Icons.arrow_back),
           ),
           toolbarHeight: 30,
+          backgroundColor: AppColors.backgroundColor,
         ),
         body: SingleChildScrollView(
           padding: EdgeInsets.only(top: 100, left: 15, right: 15),
@@ -209,6 +210,7 @@ class _RegisterMobileScreenState extends ConsumerState<RegisterMobileScreen> {
                           profileImage: _selectedImage,
                           name: name,
                         );
+                        LoginController.clearText();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text("Registered as $email")),
                         );
