@@ -20,13 +20,13 @@ class CartNotifier extends StateNotifier<List<CartProduct>> {
   // This Function add product to cart
   Future<void> addToCart(CartProduct cartProduct) async {
     // Check if the product already exists in the cart
-    final existingProductIndex = state.indexWhere(
+    final productByIndex = state.indexWhere(
       (product) =>
           product.productId ==
           cartProduct.productId, //here productId is used as a unique key
     );
 
-    if (existingProductIndex == -1) {
+    if (productByIndex == -1) {
       // it check if product doesn't exist in cart, then add that product to cart
       await cartService.addCartProduct(
         cartProduct,
@@ -34,18 +34,18 @@ class CartNotifier extends StateNotifier<List<CartProduct>> {
       state = [...state, cartProduct];
     } else {
       // If product exists, increase its quantity by 1
-      state[existingProductIndex].quantity++;
+      state[productByIndex].quantity++;
       state = [...state]; // here the state is changes as updated
     }
   }
 
   // Remove product from cart by productId unique key
   Future<void> removeFromCart(int productId) async {
-    final existingProductIndex = state.indexWhere(
+    final productByIndex = state.indexWhere(
       (product) => product.productId == productId,
     );
 
-    if (existingProductIndex != -1) {
+    if (productByIndex != -1) {
       await cartService.removeCartProduct(
         productId,
       ); // Remove product from the hive local storage
@@ -57,24 +57,24 @@ class CartNotifier extends StateNotifier<List<CartProduct>> {
 
   // Increase product quantity by 1
   Future<void> increaseQuantity(int productId) async {
-    final existingProductIndex = state.indexWhere(
+    final productByIndex = state.indexWhere(
       (product) => product.productId == productId,
     );
-    if (existingProductIndex != -1) {
-      state[existingProductIndex].quantity++; // Increase the quantity
+    if (productByIndex != -1) {
+      state[productByIndex].quantity++; // Increase the quantity
       state = [...state]; //  updated the state
     }
   }
 
   // Decrease product quantity by 1 (or remove if quantity is 1)
   Future<void> decreaseQuantity(int productId) async {
-    final existingProductIndex = state.indexWhere(
+    final productByIndex = state.indexWhere(
       (product) => product.productId == productId,
     );
-    if (existingProductIndex != -1) {
-      if (state[existingProductIndex].quantity > 1) {
+    if (productByIndex != -1) {
+      if (state[productByIndex].quantity > 1) {
         // Only decreases if quantity is more than 1
-        state[existingProductIndex].quantity--; // Decrease quantity
+        state[productByIndex].quantity--; // Decrease quantity
         state = [...state]; // updates the state
       } else {
         // If quantity is 1, remove the product from the cart

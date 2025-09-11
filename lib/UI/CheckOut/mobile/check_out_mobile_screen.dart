@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shopping_web_app/UI/CheckOut/mobile/helper/custom_checkout_mobile_listview.dart';
 import 'package:shopping_web_app/UI/Orders/mobile/order_mobile_screen.dart';
 import 'package:shopping_web_app/UI/utils/theme/app_colors.dart';
 import 'package:shopping_web_app/UI/utils/theme/text_class.dart';
@@ -33,41 +34,7 @@ class _CheckOutMobileScreenState extends ConsumerState<CheckOutMobileScreen> {
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: cart.length,
-                itemBuilder: (context, index) {
-                  final product = cart[index];
-                  return Card(
-                    margin: EdgeInsets.symmetric(vertical: 8),
-                    child: ListTile(
-                      leading: product.imageUrl.isNotEmpty
-                          ? Image.network(
-                              product.imageUrl.first,
-                              width: 70,
-                              height: 70,
-                              fit: BoxFit.cover,
-                            )
-                          : Icon(Icons.image_not_supported, size: 50),
-                      title: Text(product.productName ?? ''),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Price: ₹${(product.productPrice ?? 0).toStringAsFixed(2)}",
-                          ),
-                          Text("Quantity: ${product.quantity}"),
-                        ],
-                      ),
-                      trailing: Text(
-                        "₹${(product.productPrice ?? 0) * product.quantity}",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
+            Expanded(child: CustomCheckoutMobileListview()),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 20),
               child: Row(

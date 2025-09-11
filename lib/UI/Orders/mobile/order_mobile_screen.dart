@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shopping_web_app/UI/Auth/mobile/auth/register_mobile_screen.dart';
+import 'package:shopping_web_app/UI/Orders/mobile/helper/custom_mobile_choice_listview.dart';
+import 'package:shopping_web_app/UI/Orders/mobile/helper/custom_order_mobile_listview.dart';
 import 'package:shopping_web_app/UI/Product/mobile/product_mobile_screen.dart';
 import 'package:shopping_web_app/UI/utils/theme/app_colors.dart';
 import 'package:shopping_web_app/UI/utils/theme/text_class.dart';
@@ -77,9 +79,9 @@ class _OrderMobileScreenState extends ConsumerState<OrderMobileScreen> {
         ),
       );
     }
-    final filteredOrders = selectedFilter == null
-        ? orders
-        : orders.where((order) => order.status == selectedFilter).toList();
+    // final filteredOrders = selectedFilter == null
+    //     ? orders
+    //     : orders.where((order) => order.status == selectedFilter).toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -103,133 +105,9 @@ class _OrderMobileScreenState extends ConsumerState<OrderMobileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 60,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  const SizedBox(width: 10),
-                  ChoiceChip(
-                    label: Text(TextClass.all),
-                    selected: selectedFilter == null,
-                    onSelected: (bool selected) {
-                      setState(() {
-                        selectedFilter = null;
-                      });
-                    },
-                  ),
-                  const SizedBox(width: 10),
-                  ...OrderStatus.values.map((status) {
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 10),
-                      child: ChoiceChip(
-                        label: Text(status.name),
-                        selected: selectedFilter == status,
-                        onSelected: (bool selected) {
-                          setState(() {
-                            selectedFilter = selected ? status : null;
-                          });
-                        },
-                      ),
-                    );
-                  }).toList(),
-                ],
-              ),
-            ),
+            SizedBox(height: 60, child: CustomMobileChoiceListview()),
             const SizedBox(height: 16),
-            Expanded(
-              child: ListView.builder(
-                itemCount: filteredOrders.length,
-                itemBuilder: (context, index) {
-                  final order = filteredOrders[index];
-                  return Card(
-                    margin: EdgeInsets.all(8),
-                    child: ListTile(
-                      leading: order.imageUrl.isNotEmpty
-                          ? SizedBox(
-                              width: 70,
-                              child: Wrap(
-                                spacing: 2,
-                                runSpacing: 2,
-                                children: order.imageUrl.map((url) {
-                                  return Image.network(
-                                    url,
-                                    width: 60,
-                                    height: 60,
-                                    fit: BoxFit.contain,
-                                  );
-                                }).toList(),
-                              ),
-                            )
-                          : Icon(Icons.image_not_supported, size: 40),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: order.products.map((product) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Product Name: ${product.productName}",
-                                style: TextStyle(
-                                  color: AppColors.textColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                "Product ID: ${product.productId}",
-                                style: TextStyle(
-                                  color: AppColors.textColor,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Date: ${order.orderDate.toLocal().toString().split(' ')[0]}",
-                            style: TextStyle(color: AppColors.textColor),
-                          ),
-                          Text(
-                            "Total Price: ₹${order.totalPrice.toStringAsFixed(2)}",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      trailing: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          DropdownButton<OrderStatus>(
-                            value: order.status,
-                            onChanged: (newStatus) {
-                              if (newStatus != null) {
-                                ref
-                                    .read(orderProvider.notifier)
-                                    .updateOrderStatus(order, newStatus);
-                              }
-                            },
-                            items: OrderStatus.values.map((status) {
-                              return DropdownMenuItem(
-                                value: status,
-                                child: Text(
-                                  status.name,
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
+            Expanded(child: CustomOrderMobileListview()),
           ],
         ),
       ),

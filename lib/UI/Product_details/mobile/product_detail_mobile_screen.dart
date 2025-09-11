@@ -1,11 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shopping_web_app/UI/Cart/mobile/cart_mobile_screen.dart';
+import 'package:shopping_web_app/UI/Product_details/mobile/helper/custom_modile_productdetail_elevated.dart';
 import 'package:shopping_web_app/UI/utils/theme/text_class.dart';
-import 'package:shopping_web_app/framework/controller/cart/cart_provider.dart';
 import 'package:shopping_web_app/framework/controller/product_detail/product_detail_provider.dart';
-import 'package:shopping_web_app/framework/repository/cart/model/hive_cart_model.dart';
 import 'package:shopping_web_app/ui/utils/theme/app_colors.dart';
 
 class ProductDetailMobileScreen extends ConsumerStatefulWidget {
@@ -39,7 +37,6 @@ class _ProductDetailMobileScreenState
     final selectedProduct = selectedProductList.isNotEmpty
         ? selectedProductList.last
         : null;
-
     if (selectedProduct == null) {
       return Scaffold(
         appBar: AppBar(title: Text(TextClass.productDetails)),
@@ -123,47 +120,8 @@ class _ProductDetailMobileScreenState
               SizedBox(height: 30),
               SizedBox(
                 height: 50,
-                width: 340,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    backgroundColor: AppColors.secondaryColor,
-                  ),
-                  onPressed: () {
-                    final cartProduct = CartProduct(
-                      productId:
-                          int.tryParse(selectedProduct.productId ?? '0') ?? 0,
-                      productName: selectedProduct.productName ?? '',
-                      productPrice: selectedProduct.productPrice ?? 0,
-                      quantity: 1,
-
-                      imageUrl: selectedProduct.imageUrl ?? [],
-                      dateTime: DateTime.now(),
-                      status: ProductStatus.pending,
-                      userEmail: '',
-                    );
-                    ref.read(cartProvider.notifier).addToCart(cartProduct);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(TextClass.productAddedToCart),
-                        backgroundColor: AppColors.successColor,
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CartMobileScreen(),
-                      ),
-                    );
-                  },
-                  child: Text(
-                    TextClass.addToCart,
-                    style: TextStyle(color: AppColors.textColor),
-                  ),
-                ),
+                width: double.maxFinite,
+                child: CustomModileProductdetailElevated(),
               ),
             ],
           ),
